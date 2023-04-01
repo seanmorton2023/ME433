@@ -1,0 +1,46 @@
+# .gitignore file
+
+# MPLAB X IDE (Netbeans) specific
+# **/*.X/~*.*
+# **/*.X/build/
+# **/*.X/debug/
+# **/*.X/dist/
+# **/*.X/disassembly/
+# **/*.X/.generated_files/
+# **/*.X/nbproject/private/
+# **/*.X/nbproject/*.mk
+# **/*.X/nbproject/*.bash
+# **/*.X/nbproject/Makefile-genesis.properties
+
+HW2.X/~*.*
+HW2.X/build/*
+HW2.X/debug/*
+HW2.X/dist/*
+HW2.X/disassembly/*
+HW2.X/.generated_files/*
+# HW2.X/nbproject/private/*
+# HW2.X/nbproject/*.mk
+# HW2.X/nbproject/*.bash
+# HW2.X/nbproject/Makefile-genesis.properties
+
+HW2.X/nbproject/*
+
+
+#NOTE: Sean added the "*" after each file name
+
+# Object files
+*.o
+*.ko
+*.obj
+*.elf
+
+# Executables
+*.exe
+
+
+# KDE specific
+.directory
+
+# Misc
+.svn
+*.bak

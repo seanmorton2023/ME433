@@ -28,3 +28,8 @@
 .svn
 *.bak
 *.mp4
+*.pyc
+
+# Visual Studio for Python code
+.vs/*
+*.X/.vs/*

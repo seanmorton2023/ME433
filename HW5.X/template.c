@@ -1,51 +1,67 @@
 #include "nu32dip.h" // constants, functions for startup and UART
 #include "spi.h"
 #include <math.h>
+//-------------------------------//
+
+//comment out this line to show sin wave vs. triangle wave
+#define SINWAVE
+//#define TRIWAVE
+
+//-------------------------------//
 
 #define VREF 3.3 // reference max voltage
 #define SAMPLE_SIZE 200
 
 uint16_t sin_bits_array[SAMPLE_SIZE];
 uint16_t tri_bits_array[SAMPLE_SIZE];
+unsigned char byte1; //send bytes to the DAC chip one at a time
+unsigned char byte2; 
+unsigned char rcvd;
+
+#ifdef SINWAVE
+    #define ARR_ALIAS sin_bits_array
+    #define FREQ_HZ 2
+#endif
+
+#ifdef TRIWAVE
+    #define ARR_ALIAS tri_bits_array
+    #define FREQ_HZ 1
+#endif
 
 uint16_t convert_v_to_bits(double v);
+double tri(uint16_t ii, double amp, uint16_t per); //triangle wave function
 void gen_sin_spi_bits(uint16_t* array_ptr);
 void gen_tri_spi_bits(uint16_t* array_ptr);
 
+uint16_t delay_ms = FREQ_HZ / SAMPLE_SIZE * 1000; //time between transmissions
+
+//-------------------------------//
+
 int main(void) {
-  char message[100];
-  
-  //all init functions
-  
-  //make array of precomputed sines
-    
+
   NU32DIP_Startup(); // cache on, interrupts on, LED/button init, UART init
-  while (1) {
-      
-      //make a voltage to send to the chip, sin(t)
-      
-      
-      //make the 2 8-bit numbers for spi_io
-      
-      //a_or_b 1 1 1 [10-bit number] 0 0]
-      
-      //send a 
-      
-      
-      //send the first (high) 8-bit num from the 16-bit num. (see endianness))
-      //bit-shift the 16-bit num to just grab 8 bits, t >>>8
-      
-      //send the last (low) 8-bit num from the 16-bit number.
-      //use bitwise AND with 0xFF (0b0000000011111111)) to get these 8 bits
-      
-      //re/ asst: make the update rate of the DAC 200x faster, rather
-      //than 50x
-      
-      //on a scope, verify you see the stuff from SPI before even wiring
-      //up the DAC chip. do things modularly
-      
-      //also: all this can be pre-computed for speed; no need to do it all
-      //on the fly
+
+  //make array of precomputed sines and triangle waves for 
+  //faster execution speed in loop; no need to do it on the fly
+  gen_sin_spi_bits(sin_bits_array);
+  gen_tri_spi_bits(tri_bits_array);  
+  
+  while (1) {    
+            
+      for (int ii = 0; ii < SAMPLE_SIZE; ++ii) {
+          _CP0_SET_COUNT(0);
+          
+          //convert each 16-bit msg into two 8-bit msgs
+          byte1 = ARR_ALIAS[ii] >> 8;
+          byte2 = ARR_ALIAS[ii] & 0xFF; //last 8 bits
+          rcvd = spi_io(byte1);
+          rcvd = spi_io(byte2);
+          
+          //wait between each transmission to meet timing reqs
+          // the core timer ticks at half the SYSCLK, so 24000000 times per second
+          // so each millisecond is 24000 ticks
+          while(_CP0_GET_COUNT() < 24000*delay_ms){}
+      }
   }
 }
 
@@ -58,7 +74,13 @@ uint16_t convert_v_to_spi_bits(double v) {
     
     return (uint16_t)(control_bits | data_bits);
 }
-  
+
+double tri(uint16_t ii, double amp, uint16_t per){
+    //triangle wave function, from Wikipedia definition for a
+    //triangle wave. let "period" = the length of the array and
+    //"ii" be the index of the element of the array for our case.
+    return 4*amp/per * ( ((ii - per/4)%per) - per/2  );
+}  
 
 void gen_sin_spi_bits(uint16_t* array_ptr) {
     //generates an array of data representing a sine wave signal,
@@ -75,6 +97,7 @@ void gen_tri_spi_bits(uint16_t* array_ptr) {
     //pre-converted to the format needed for the SPI chip
     double yval = 0;
     for (int ii = 0; ii < SAMPLE_SIZE; ++ii) {   
-        sinx = 1.65*sin(ii * (2*3.14159/SAMPLE_SIZE)) + 1.65;
-        array_ptr[ii] = convert_v_to_spi_bits(sinx); 
+        yval = tri(ii, 1.65, SAMPLE_SIZE);
+        array_ptr[ii] = convert_v_to_spi_bits(yval); 
+    }
 }

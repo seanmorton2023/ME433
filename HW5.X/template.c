@@ -40,7 +40,8 @@ uint16_t delay_ms = FREQ_HZ / SAMPLE_SIZE * 1000; //time between transmissions
 int main(void) {
 
   NU32DIP_Startup(); // cache on, interrupts on, LED/button init, UART init
-
+  initSPI();
+  
   //make array of precomputed sines and triangle waves for 
   //faster execution speed in loop; no need to do it on the fly
   gen_sin_spi_bits(sin_bits_array);
@@ -51,9 +52,15 @@ int main(void) {
       for (int ii = 0; ii < SAMPLE_SIZE; ++ii) {
           _CP0_SET_COUNT(0);
           
-          //convert each 16-bit msg into two 8-bit msgs
-          byte1 = ARR_ALIAS[ii] >> 8;
-          byte2 = ARR_ALIAS[ii] & 0xFF; //last 8 bits
+//          //convert each 16-bit msg into two 8-bit msgs
+//          byte1 = ARR_ALIAS[ii] >> 8;
+//          byte2 = ARR_ALIAS[ii] & 0xFF; //last 8 bits
+          
+          //testing: just send 
+          uint16_t full_data = convert_v_to_spi_bits(1.65);
+          byte1 = full_data >> 8;
+          byte2 = full_data & 0xFF;
+          
           rcvd = spi_io(byte1);
           rcvd = spi_io(byte2);
           

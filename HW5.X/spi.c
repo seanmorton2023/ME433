@@ -3,16 +3,24 @@
 
 // initialize SPI1
 void initSPI() {
-    // Pin B14 has to be SCK1
-    // Turn of analog pins
+    // Pin B14 has to be SCK1; white wire
+    // Turn off analog pins
     //...
+    PORTAbits.ANSELA = 0; //set all bits in ANSEL to "low" to make digital
+    PORTBbits.ANSELB = 0; //set all bits in ANSEL to "low" to make digital
+    
     // Make an output pin for CS
     //...
     //...
-    // Set SDO1
-    //...
+    
+    RPB7bits.RPB7R = 0b0011; //RPB7 --> SS1; blue wire
+    //is there anything else to this? TRIS and LAT?
+    
+    // Set SDO1 
+    RPB6Rbits.RPB6R = 0b0011; //RPB6 --> SDO1; green wire
+    
     // Set SDI1
-    //...
+    SDI1Rbits.SDI1R = 0b0100; //SDI1 --> RPB8; no wire needed
 
     // setup SPI1
     SPI1CON = 0; // turn off the spi module and reset it

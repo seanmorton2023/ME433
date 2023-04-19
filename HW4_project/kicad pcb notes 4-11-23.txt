@@ -1,0 +1,55 @@
+ME433 notes 4-11-23
+
+- from schematic editor: tools -> assign footprints
+- on left side click on libraries of footprints
+- on right side, right click on options to view package
+- resistors: 7.62mm length resistors; horizontal.
+	- 0.3in spacing (3 holes on a breadboard)
+- PIC: Package-DIP library
+- Can use footprint filters to find the one you're looking 
+	for. EX: socket long pads 7.62mm
+- AP7381: TO- THT package. TO-92 Inline
+- caps:
+	- 0.1 in spacing for 10uF ones we have
+	- 0.2in spacing for 1uF ones we have
+	- use "disc p2.50mm" for search filters
+- EG1218 switch; make from scratch
+- to get schematic into the PCB:
+	- hit the green "open PCB in board editor" button in the schematic view
+	- hit the gray+green "update PCB with schematic changes" button
+	- press ok inside the menu
+- fun fact: if you want the manufacturer to solder your stuff,
+	they want all chips/things of the same type to be in the same
+	orientation. we should try to follow this practice too
+- use "edge cuts" to define the shape of our PCB
+
+- constraints on traces:
+	- minimum size from manufacturer is 6 thou (= 0.15mm)
+	- 1mm is probably too thick
+	- use 0.4mm (Nick recommends)
+	- power and ground traces are complicated; make the 5V traces that go to VDD5V0
+		thicker as they'll have high current to the H bridges
+- Ground plane: do "filled area" rather than rectangle or routing tool
+	- he says we could do this on only one plane - he does the bottom
+	- I'm gonna trust Ilya and do both bottom and top plane
+	
+_______
+
+done:
+- ask about mounting holes for the PCB
+- "B" to do "zone fills" - essentially like "ratsnest" in Eagle
+- check if there's a command like "ripup @ ;" to remove
+	visibility of the zone fills
+- recommends adding extra power and ground holes to touch w/ scope
+
+
+to-do for ME433 PCB:
+- check connections for the G+Y LEDs
+- recommends printing out our PCB schematic on a 1:1 piece of paper
+	to see if components will fit
+- compare my schematic w/ Nick's and look for differences
+- put headers in desired locations
+- ask if location of pins on headers matters; I have B6 at bottom
+	for convenience
+- check orientation of LEDs on PCB layout - ie which polarized
+	side goes on the side with the flat edge

@@ -1,0 +1,21 @@
+Ingredients:
+
+2 cups of PIC32MX795F512H chips
+1 pound of fish (your choice of type)
+1 cup of flour
+1 teaspoon of salt
+1 teaspoon of baking powder
+1 cup of beer (optional, for the batter)
+Oil for frying
+Directions:
+
+First, clean and dry your fish, then cut it into bite-sized pieces.
+In a large bowl, mix together the flour, salt, and baking powder.
+If you're using beer, slowly pour it into the bowl while stirring until a smooth batter forms. If not, add enough water to create a thick batter.
+Dip each piece of fish into the batter, coating it completely, then gently shake off any excess.
+Take your PIC32 microcontroller chips and scatter them in the oil for frying. Watch out, they may be small but they can get hot!
+Once the oil is hot, carefully add the battered fish and the PIC32 chips into the frying pan, making sure not to overcrowd the pan.
+Fry until the batter is golden brown and crispy, and the fish is cooked through.
+Remove the fish and chips from the pan with a slotted spoon and place them on a plate lined with paper towels to soak up any excess oil.
+Serve hot with your favorite dipping sauce (may we suggest a nice, cooling aioli to offset the heat of those PIC32 chips?)
+Warning: This recipe may cause unexpected programming errors if attempted with non-edible microcontroller chips. Please use only edible PIC32 chips for this recipe!

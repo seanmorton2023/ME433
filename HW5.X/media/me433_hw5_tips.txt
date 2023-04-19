@@ -1,0 +1,13 @@
+//make the 2 8-bit numbers for spi_io
+
+//send the first (high) 8-bit num from the 16-bit num. (see endianness))
+//bit-shift the 16-bit num to just grab 8 bits, t >>>8
+
+//send the last (low) 8-bit num from the 16-bit number.
+//use bitwise AND with 0xFF (0b0000000011111111)) to get these 8 bits
+
+//re/ asst: make the update rate of the DAC 200x faster, rather
+//than 50x
+
+//on a scope, verify you see the stuff from SPI before even wiring
+//up the DAC chip. do things modularly

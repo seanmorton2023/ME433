@@ -6,16 +6,13 @@ void initSPI() {
     // Pin B14 has to be SCK1; white wire
     // Turn off analog pins
     //...
-    PORTAbits.ANSELA = 0; //set all bits in ANSEL to "low" to make digital
-    PORTBbits.ANSELB = 0; //set all bits in ANSEL to "low" to make digital
+    ANSELA = 0; //set all bits in ANSEL to "low" to make digital
+    ANSELB = 0; //set all bits in ANSEL to "low" to make digital
     
-    // Make an output pin for CS
-    //...
-    //...
-    
-    RPB7bits.RPB7R = 0b0011; //RPB7 --> SS1; blue wire
-    //is there anything else to this? TRIS and LAT?
-    
+    // Make an output pin for CS  
+    //RPB7bits.RPB7R = 0b0011; //RPB7 --> SS1; blue wire
+    TRISBbits.TRISB7 = 0; //makes that pin a 0/output
+      
     // Set SDO1 
     RPB6Rbits.RPB6R = 0b0011; //RPB6 --> SDO1; green wire
     

@@ -31,7 +31,7 @@ unsigned char rcvd;
 #endif
 
 uint16_t convert_v_to_spi_bits(double v);
-double tri(uint16_t ii, double amp, uint16_t per); //triangle wave function
+double tri(uint16_t ii); //triangle wave function
 void gen_sin_spi_bits(uint16_t* array_ptr);
 void gen_tri_spi_bits(uint16_t* array_ptr);
 
@@ -64,10 +64,13 @@ int main(void) {
 //          byte2 = full_data & 0xFF;
           
           //set chip select low
-          LATBbits.LATB7 = 0;
+          LATBbits.LATB7 = 0;   
           rcvd = spi_io(byte1);
           rcvd = spi_io(byte2);
           LATBbits.LATB7 = 1;
+          
+          
+          //next, 
 
           //wait between each transmission to meet timing reqs
           // the core timer ticks at half the SYSCLK, so 24000000 times per second
@@ -89,34 +92,20 @@ uint16_t convert_v_to_spi_bits(double v) {
     //Takes a voltage, and converts it to bits to send to the SPI buffer.
     //example: 3.3V = 1023]
     int data_bits = round((v/VREF) * 1023);
-    data_bits = (data_bits << 2) & 0b1111111111;
+    data_bits = (data_bits & 0b1111111111) << 2;
     //added the "and" to eliminate things larger than 10 bits
     int control_bits = 0b0111 << 12;
     
     return (uint16_t)(control_bits | data_bits);
 }
 
-double tri(uint16_t ii, double amp, uint16_t per){
-    //triangle wave function, from Wikipedia definition for a
-    //triangle wave. let "period" = the length of the array and
-    //"ii" be the index of the element of the array for our case.
-//    return 4*amp/per * ( ((ii - per/4)%per) - per/2  );
-    
+double tri(uint16_t ii){
+    //triangle wave function; simplest method
     return (
-            (ii < (SAMPLE_SIZE/2)) ?
-                (TRI_SCALAR * ii) :
-                (TRI_SCALAR * (SAMPLE_SIZE - ii))
-            )
-    
-//    
-//    //format from Sarah's code:
-//    int triwave[512];
-//    for (int ii = 0; ii < 512; ++ii){
-//        if (ii < 256){ vol = 4*ii); }
-//        else { vol = 4*(512-i) - 1  );}
-//    }
-    
-    //Marchuk: use unsigned short
+        (ii < (SAMPLE_SIZE/2)) ?
+            (TRI_SCALAR * ii) :
+            (TRI_SCALAR * (SAMPLE_SIZE - ii))
+        );
 }  
 
 void gen_sin_spi_bits(uint16_t* array_ptr) {
@@ -132,9 +121,7 @@ void gen_sin_spi_bits(uint16_t* array_ptr) {
 void gen_tri_spi_bits(uint16_t* array_ptr) {
     //generates an array of data representing a triangle wave signal,
     //pre-converted to the format needed for the SPI chip
-    double yval = 0;
     for (int ii = 0; ii < SAMPLE_SIZE; ++ii) {   
-        yval = tri(ii, 1.65, SAMPLE_SIZE);
-        array_ptr[ii] = convert_v_to_spi_bits(yval); 
+        array_ptr[ii] = convert_v_to_spi_bits(tri(ii)); 
     }
 }

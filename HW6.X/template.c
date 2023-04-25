@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 //#define FREQ_HZ 20
-#define FREQ_HZ 2
+#define FREQ_HZ 200
 
 #define DEVICE_ADDR 0b000
 #define OPCODE 0b0100
@@ -45,17 +45,13 @@ int main(void) {
         sprintf(uart_buff, "Byte received: %d\r\n", byte);
         NU32DIP_WriteUART1(uart_buff);
         
+        if (!byte) {
+            turn_on_gp7();
+        } else {
+            turn_off_gp7();
+        }
+        
         while (_CP0_GET_COUNT() < DELAY_CLOCK) {/*nothing*/}
-
-//      _CP0_SET_COUNT(0);
-//      
-//      //blink the LED at 20Hz
-//      turn_on_gp7();
-//      while (_CP0_GET_COUNT() < DELAY_CLOCK) {/*nothing*/}
-//      //delay(), 20Hz
-//      turn_off_gp7();
-//      while (_CP0_GET_COUNT() < 2*DELAY_CLOCK) {/*nothing*/}
-
   }
 }
 
@@ -133,9 +129,6 @@ unsigned char read_gp0(){
        
     //send the reg to read from (GPIO reg, posn 0))
     i2c_master_send(0x09);      
-    
-    //send the value to put in that register
-    //i2c_master_send(0b0 << 7);
             
     //send the stop bit
     i2c_master_stop();
@@ -143,15 +136,10 @@ unsigned char read_gp0(){
     //send restart
     i2c_master_restart();
     
-    //do we have to send a start bit in here?
-    
     //send the address w/ read bit
     //0b01000001
     i2c_master_send(CLIENT_ADDR | READ);
     
-    //send the address to read from?
-    
-
     //receive, rather than read
     unsigned char a = i2c_master_recv();
     

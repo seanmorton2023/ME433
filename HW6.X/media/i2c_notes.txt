@@ -1,0 +1,27 @@
+i2c debug notes
+
+- sda is low when data isn't being sent
+- first and last waveform on SCL look odd
+- weird blip on the SDA line before a 0x00 is 
+	sent on it - I think this is the "turn off LED" 
+	command, but it's not getting turned off
+	
+- write command is specified as "0x20" - check if this is
+	the same as 0b0100 0000
+		--> no, it's 0b0010 0000
+
+- the system alternates between sending 0x80 (0b1000 0000) and 0x00 as the data
+	written to the OLAT register
+		
+		
+questions for Nick:
+- should SDA be low when data is not being sent?
+- the opcode&write command being sent is 0b0010 0000, but I want
+	it to be 0b0100 0000. why is it doing that? is the data delayed
+	somehow?
+- is the timing strange for my system? it seems like the time between
+	the 1st and second writes is very small
+- restart bits: in between sequential reads, the datasheet made it seem
+	like if we send a restart bit, that can take the place of the stop
+	and start bits. is that the case, or do I need to send a restart bit and
+	another bit to go along with it?

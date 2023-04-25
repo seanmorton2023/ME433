@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 //#define FREQ_HZ 20
-#define FREQ_HZ 20
+#define FREQ_HZ 2
 
 #define DEVICE_ADDR 0b000
 #define OPCODE 0b0100
@@ -39,23 +39,22 @@ int main(void) {
   
   while (1) {    
             
-//        _CP0_SET_COUNT(0);
-//        
-//        byte = read_gp0();
-//        sprintf(uart_buff, "Byte received: %d\r\n", byte);
-//        NU32DIP_WriteUART1(uart_buff);
-//        
-//        while (_CP0_GET_COUNT() < DELAY_CLOCK) {/*nothing*/}
+        _CP0_SET_COUNT(0);
+        
+        byte = read_gp0();
+        sprintf(uart_buff, "Byte received: %d\r\n", byte);
+        NU32DIP_WriteUART1(uart_buff);
+        
+        while (_CP0_GET_COUNT() < DELAY_CLOCK) {/*nothing*/}
 
-      NU32DIP_WriteUART1("Top of the loop\r\n");
-      _CP0_SET_COUNT(0);
-      
-      //blink the LED at 20Hz
-      turn_on_gp7();
-      while (_CP0_GET_COUNT() < DELAY_CLOCK) {/*nothing*/}
-      //delay(), 20Hz
-      turn_off_gp7();
-      while (_CP0_GET_COUNT() < 2*DELAY_CLOCK) {/*nothing*/}
+//      _CP0_SET_COUNT(0);
+//      
+//      //blink the LED at 20Hz
+//      turn_on_gp7();
+//      while (_CP0_GET_COUNT() < DELAY_CLOCK) {/*nothing*/}
+//      //delay(), 20Hz
+//      turn_off_gp7();
+//      while (_CP0_GET_COUNT() < 2*DELAY_CLOCK) {/*nothing*/}
 
   }
 }
@@ -136,10 +135,10 @@ unsigned char read_gp0(){
     i2c_master_send(0x09);      
     
     //send the value to put in that register
-    i2c_master_send(0b0 << 7);
+    //i2c_master_send(0b0 << 7);
             
     //send the stop bit
-    //i2c_master_stop();
+    i2c_master_stop();
   
     //send restart
     i2c_master_restart();
@@ -148,13 +147,16 @@ unsigned char read_gp0(){
     
     //send the address w/ read bit
     //0b01000001
-    i2c_master_send(CLIENT_ADDR | WRITE);
+    i2c_master_send(CLIENT_ADDR | READ);
+    
+    //send the address to read from?
+    
 
     //receive, rather than read
     unsigned char a = i2c_master_recv();
     
     //send an ACK bit - for reading only I think?
-    i2c_master_ack(0);
+    i2c_master_ack(1); //1 = NACK
     
     //send a stop bit
     i2c_master_stop();

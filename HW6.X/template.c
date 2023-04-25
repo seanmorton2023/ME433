@@ -10,7 +10,7 @@
 #define CLIENT_ADDR ((OPCODE << 4) | (DEVICE_ADDR << 1))
 
 #define DELAY_MS (float)(1000 / FREQ_HZ)
-#define DELAY_CLOCK (uint32_t)(24000 * DELAY_MS)
+#define DELAY_CLOCK (uint32_t)(24000 * DELAY_MS_MAINLOOP)
 
 #define READ 1
 #define WRITE 0

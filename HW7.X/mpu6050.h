@@ -5,6 +5,8 @@
 // Datasheet: https://invensense.tdk.com/wp-content/uploads/2015/02/MPU-6000-Datasheet1.pdf
 // Register map: https://invensense.tdk.com/wp-content/uploads/2015/02/MPU-6000-Register-Map1.pdf
 
+#include "i2c_master_noint.h"
+
 #define IMU_ADDR 0x68  // I2C hardware address of MPU-6050
 #define IMU_ARRAY_LEN 14 // 14 contiguous registers from ACCEL_XOUT_H to GYRO_ZOUT_L
 

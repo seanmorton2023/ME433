@@ -1,17 +1,26 @@
 #include "nu32dip.h" // constants, functions for startup and UART
 #include "mpu6050.h"
 
+#define DELAY_MS_LED (50)
+#define DELAY_CLOCK_LED (24000 * DELAY_MS_LED)
+
+//previously had 100Hz but data buffered too fast for plotter.py to catch up
+#define FREQ_HZ_MAINLOOP 25
+#define DELAY_MS_MAINLOOP ((float)1000/FREQ_HZ_MAINLOOP)
+#define DELAY_CLOCK_MAINLOOP (uint32_t)(24000 * DELAY_MS_MAINLOOP)
+
+#define UART_LENGTH 200
+
 int main(void) {
 
   NU32DIP_Startup(); // cache on, interrupts on, LED/button init, UART init
   init_mpu6050();
   
-  //char array for data sent from the MPU
-  uint8_t uart_buff[200];
-  uint8_t data_array[14];
-  float ax, ay, az, gx, gy, gz, t; //accel, gyro speed, temperature
+  uint8_t uart_buff[UART_LENGTH];   // char array for sending data over UART
+  uint8_t data_array[14]; 	// char array for the raw data
+  float ax, ay, az, gx, gy, gz, t; //raw data values: accel, gyro speed, temperature
   
-  //read whoami
+  //read + print whoami
   uint8_t who = whoami();
   sprintf(uart_buff, "%X\r\n", who);
   NU32DIP_WriteUART1(uart_buff);
@@ -19,24 +28,22 @@ int main(void) {
   if (who != 0x68){
       while (1){
           //get stuck in an infinite loop
-          //maybe blink an LED
+          NU32DIP_WriteUART1("Stuck in a loop\r\n");
+
+          _CP0_SET_COUNT(0);
+          NU32DIP_GREEN = 1;
+          while (_CP0_GET_COUNT() < DELAY_CLOCK_LED) {/*nothing*/}
+          NU32DIP_GREEN = 0;      
+          while (_CP0_GET_COUNT() < 2*DELAY_CLOCK_LED) {/*nothing*/}
       }
-      
-    //implement a piece of blocking code until the plotter.py file sends 
-    // a newline character
-    NU32DIP_ReadUART1(uart_buff);
+    }
     
-    
-    //in plotter.py, do ser.write(b'\n') before we send data.
-    //Marchuk had a button-press determine when the PIC sends data
-    //also do ax.set_ylim(-2, 2) to change limits
-    
-    
+    //block data from being sent from the PIC until ready
+    NU32DIP_WriteUART1("Press 'USER' button to begin sending data.\r\n");
+    while (NU32DIP_USER) { /*nothing; wait*/ }
     
     while (1) {
         
-        //precise timing: do a 100Hz timer. 500Hz will just cause the 
-        //same data t get read several times
         _CP0_SET_COUNT(0);
         
         //read IMU burst
@@ -44,26 +51,21 @@ int main(void) {
         
         //convert data to g's
         ax = conv_xXL(data_array);
+        ay = conv_yXL(data_array);
+        az = conv_zXL(data_array);
         
+        gx = conv_xG(data_array);
+        gy = conv_yG(data_array);
+        gz = conv_zG(data_array);
+        
+        t = conv_temp(data_array);
+       
         //print all the data to the UART buffer
-        //eventually wants all data in the terminal, in nice columns
-        //(like 4.3%f), so we can see all data, but only send one column
-        //to plotter.py
-        sprintf(uart_buff, "%f \r\n", ax);
+//        sprintf(uart_buff, "%f \r\n", ax); //for 1 channel of data --> plotter.py
+        sprintf(uart_buff, "%6.3f | %6.3f | %6.3f | %9.3f | %9.3f | %9.3f | %8.3f \r\n", 
+                ax, ay, az, gx, gy, gz, t); //for pretty columns
+        NU32DIP_WriteUART1(uart_buff);
         
-        //while (_CP0_GET_COUNT() < 24000 * ...I forget)
-        
-        
-        
+        while (_CP0_GET_COUNT() < DELAY_CLOCK_MAINLOOP){/*nothing*/}  
     }
-    
-      
-  }
-  
-
-  
-  while (1) {    
-            
-     
-  }
 }

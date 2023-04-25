@@ -1,4 +1,3 @@
-#include "i2c_master_noint.h"
 #include "mpu6050.h"
 
 // Implementation by Dan Lynch

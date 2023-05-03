@@ -6,21 +6,18 @@ import pandas as pd
 from python_fft import *
 from hw9_filters import *
 
-def main(filter_function):
+def main(filter_function, filtername, titledata):
     '''import each signal and plot fft of each;
     apply filter if applicable
+
+    filter_function: type = Python function
+    filtername: type = string; just the name of the filter
+    titledata: type = any; will get converted to string
     '''
-    import hw9_filters
-    hw9_filters.n_pts_mav = 30 #like "extern", in C
-
-    sigs = []
     figs = []
-    for el in ['A','B','D']:
-        sigs.append(pd.read_csv('sig' + el + '.csv').to_numpy())
-
-    i = 0
-    for sig in sigs: 
+    for i, el in enumerate(['A','B','D']):
         #obtain FFT
+        sig = pd.read_csv('sig' + el + '.csv').to_numpy()
         t, s = (sig.transpose()[0], sig.transpose()[1])
         frq, Y = fft_data(t,s)
 
@@ -29,19 +26,29 @@ def main(filter_function):
         fig, (ax1, ax2) = plt.subplots(2, 1)
 
         fig, (ax1, ax2) = plot_time_and_fft(t, s, frq, Y, fig, (ax1, ax2), 'k')
-        if filter_function is not None:
+        if filter_function:
             frq_new, Y_new = fft_data(t, filter_function(s))
             fig, (ax1, ax2) = plot_time_and_fft(t, filter_function(s), \
                                         frq_new, Y_new, fig, (ax1, ax2), 'r')
+            title = f"Filter: {filtername}, {str(titledata)}"
+        else:
+            title = "Original signal"
+
+        fig.suptitle(title)
         figs.append(fig)
-        print('\n')
-        i += 1
 
 
 
 
 if __name__ == '__main__':
-    main(mav)
+    A = 0.9 #for IIR
+
+    import hw9_filters
+    hw9_filters.n_pts_mav = 30 #like "extern", in C
+    hw9_filters.iir_scalar = A
+    
+    main(mav, "MAV", hw9_filters.n_pts_mav)
+    main(iir, "IIR", (A, round(1-A, 2) ) )
     plt.show()
 
 '''

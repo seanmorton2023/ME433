@@ -20,3 +20,22 @@ def mav(s):
             out.append(0)
 
     return out
+
+def iir(s):
+    '''Low-pass filter the data using an "infinite-impulse response",
+    or in other words, a scalar times previous data + (1-scalar) * new data.
+    Commonly used discrete-time filter we used in RDS.
+    '''
+    global iir_scalar
+    (A, B) = (iir_scalar, 1 - iir_scalar)
+    out = []
+
+    for i, curr in enumerate(s):
+        if i > 0:
+            #this notation isn't as pretty as it is with pure array indexing
+            next = A * out[i-1] + B*curr
+            out.append(next)
+        else:
+            out.append(0)
+
+    return out

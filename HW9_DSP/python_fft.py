@@ -18,17 +18,17 @@ def fft_data(t,s):
     Y = Y[range(int(n/2))]
     return frq, abs(Y)
 
-def plot_time_and_fft(t, s, frq, Y):
+def plot_time_and_fft(t, s, frq, Y, fig, subplots, c):
     '''Simply plots the time-domain and frequency-domain data for our signal on one plot
     '''
-    fig, (ax1, ax2) = plt.subplots(2, 1)
-    ax1.plot(t,s,'b')
+    (ax1, ax2) = subplots
+    ax1.plot(t,s,c=c)
     ax1.set_xlabel('Time')
     ax1.set_ylabel('Amplitude')
-    ax2.loglog(frq,Y,'b') # plotting the fft
+    ax2.loglog(frq,Y,c=c) # plotting the fft
     ax2.set_xlabel('Freq (Hz)')
     ax2.set_ylabel('|Y(freq)|')
-    return fig
+    return fig, (ax1, ax2)
 
 if __name__ == '__main__':
     dt = 1.0/10000.0 # 10kHz

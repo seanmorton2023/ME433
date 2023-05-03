@@ -29,5 +29,29 @@ print(data)
 
 #find sampling rate
 dt = data[-1][0]/data.shape[0]
-freq_hz = 1/dt
+freq_samp = 1/dt
+
+#apply fft and visualize
+#data = data.reshape(data.shape[::-1])
+fft_out = np.fft.fft(data)
+print(fft_out)
+
+n_pts = len(fft_out)
+index_array = np.arange(n_pts)
+t_final = n_pts * dt
+freq_array = index_array/t_final #I don't understand this part of Marchuk's code
+
+#print(data)
+#print(len(data))
+#print("Index array:")
+#print(index_array)
+#print(t_final)
+#print("Freq array:")
+#print(freq_array)
+
+#plot freqs
+print(len(freq_array))
+print(len(np.abs(fft_out)))
+
+plt.stem(freq_array, np.abs(fft_out))
 

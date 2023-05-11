@@ -38,8 +38,6 @@ def main(filter_function, filtername, titledata):
         figs.append(fig)
 
 
-
-
 if __name__ == '__main__':
     A = 0.9 #for IIR
 
@@ -56,4 +54,15 @@ cutoff freqs needed:
 fig1: peak at 25Hz -->cutoff 30Hz
 fig2: peak at 9Hz -->cutoff 10Hz
 fig3: peak at 30Hz (slight.) -->cutoff 50Hz
+
+sampling rates:
+10000Hz
+3300Hz
+400Hz
+
+FIIIR settings:
+sigA: 10000Hz sampling rate, 100Hz cutoff,  
+sigB:
+
+
 '''

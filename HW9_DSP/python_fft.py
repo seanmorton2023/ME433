@@ -5,9 +5,10 @@ def fft_data(t,s):
     '''Calculates and returns arrays of frequencies and their magnitudes
     for the sake of plotting an FFT graph.
     '''
-    Fs = 10000 # sample rate
-    Ts = 1.0/Fs; # sampling interval
-    ts = np.arange(0,t[-1],Ts) # time vector
+    Ts = t[-1] / len(t)
+    Fs  = 1.0/Ts
+    #print(Fs)
+
     y = s # the data to make the fft from
     n = len(y) # length of the signal
     k = np.arange(n)

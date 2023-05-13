@@ -78,8 +78,6 @@ def convolve_B(sigB):
     # Normalize to get unity gain.
     h_sigB /= np.sum(h_sigB)
 
-    print(h_sigB)
-
     # Applying the filter to a signal s can be as simple as writing
     return np.convolve(sigB, h_sigB)
 
@@ -99,8 +97,6 @@ def convolve_D(sigD):
 
     # Normalize to get unity gain.
     h_sigD /= np.sum(h_sigD)
-
-    print(h_sigD)
 
     # Applying the filter to a signal s can be as simple as writing
     return np.convolve(sigD, h_sigD)

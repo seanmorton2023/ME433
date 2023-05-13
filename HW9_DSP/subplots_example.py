@@ -15,7 +15,7 @@ fig, axs = plt.subplots(nrows=2, ncols=3, figsize=(12, 8))
 
 # Plot the data on the axes objects
 axs[0, 0].plot(x, y1)
-axs[0, 0].set_title('Sin(x)')
+
 axs[0, 1].plot(x, y2)
 axs[0, 1].set_title('Cos(x)')
 axs[0, 2].plot(x, y3)

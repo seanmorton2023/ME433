@@ -19,17 +19,24 @@ def fft_data(t,s):
     Y = Y[range(int(n/2))]
     return frq, abs(Y)
 
-def plot_time_and_fft(t, s, frq, Y, fig, subplots, c):
+def plot_time_and_fft(t, s, frq, Y, axs, c):
     '''Simply plots the time-domain and frequency-domain data for our signal on one plot
     '''
-    (ax1, ax2) = subplots
+    (ax1, ax2) = axs
+    
+    #for the convolution functions
+    if len(s) > len(t):
+        diff = int((len(s)-len(t))/2)
+        s = s[ diff:-diff] #just the middle N datapoints
+
     ax1.plot(t,s,c=c)
     ax1.set_xlabel('Time')
     ax1.set_ylabel('Amplitude')
     ax2.loglog(frq,Y,c=c) # plotting the fft
     ax2.set_xlabel('Freq (Hz)')
     ax2.set_ylabel('|Y(freq)|')
-    return fig, (ax1, ax2)
+
+    return (ax1, ax2)
 
 if __name__ == '__main__':
     dt = 1.0/10000.0 # 10kHz

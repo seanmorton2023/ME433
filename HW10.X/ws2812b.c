@@ -7,6 +7,9 @@
 #define LOWTIME 15 // number of 48MHz cycles to be low for 0.35uS
 #define HIGHTIME 65 // number of 48MHz cycles to be high for 1.65uS
 
+#define DATA_PIN_TRISTATE TRISBbits.TRISB0
+#define DATA_PIN_WRITE LATBbits.LATB0
+
 // setup Timer2 for 48MHz, and setup the output pin
 void ws2812b_setup() {
     T2CONbits.TCKPS = 0b000; // Timer2 prescaler N=1 (1:1)
@@ -15,8 +18,8 @@ void ws2812b_setup() {
     T2CONbits.ON = 1; // turn on Timer2
 
     // initialize output pin as off - use B0
-    TRISBbits.TRISB0 = 0; //output
-    LATBbits.LATB0 = 0; //on
+    DATA_PIN_TRISTATE = 0; //output
+    DATA_PIN_WRITE = 0; //on
 }
 
 int process_color(volatile unsigned int* delay_times, uint8_t color_char, int nB) {
@@ -75,14 +78,14 @@ void ws2812b_setColor(wsColor *c, int numLEDs) {
     }
 
     // turn on the pin for the first high/low
-    LATBbits.LATB6 = 1;
+    DATA_PIN_WRITE = 1;
     TMR2 = 0; // start the timer
     for (i = 1; i < numBits; i++) {
         while (TMR2 < delay_times[i]) {
         }
         LATBINV = 0b1000000; // invert B6
     }
-    LATBbits.LATB6 = 0;
+    DATA_PIN_WRITE = 0;
     TMR2 = 0;
     while(TMR2 < 2400){} // wait 50uS, reset condition
 }

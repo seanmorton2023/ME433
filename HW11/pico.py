@@ -16,7 +16,7 @@ def fft_data(t,s):
     frq = k/T # two sides frequency range
     frq = frq[0:int(n/2)] # one side frequency range, modified for CircuitPython
     (re, im) = np.fft.fft(y) #different from how ndarrays work on regular python - in regular python it's one array w/ real + im components
-    complex_abs = (re**2 + im**2)**0.5
+    complex_abs = (re**2 + im**2) ** 0.5
     Y = complex_abs/n # fft computing and normalization
     Y = Y[0:int(n/2)] #modified for CircuitPython
     return frq, Y
@@ -26,10 +26,10 @@ def gen_data():
     arr1 = np.zeros(1024)
 
     #sum 3 sine waves into it with diff. freqs
-    t_arr = np.linspace(0, 10, 1024)
-    arr1 = arr1 + np.sin(t_arr)
-    arr1 = arr1 + np.sin(3*t_arr)
-    arr1 = arr1 + np.sin(10*t_arr)
+    t_arr = np.linspace(0, 5, 1024)
+    arr1 = arr1 + np.sin(4*2*np.pi*t_arr)
+    arr1 = arr1 + np.sin(10*2*np.pi*t_arr)
+    arr1 = arr1 + np.sin(40*2*np.pi*t_arr)
 
     #take the FFT of the output
     frq, Y = fft_data(t_arr, arr1)
@@ -44,13 +44,6 @@ def send_data(arr, name):
 #save data to CSV files and plot on local PC
 t, s, frq, Y = gen_data()
 
-# with open('orig.csv', 'w') as f, open('fft.csv') as g:
-
-    # for ii in range(len(s)):
-        # f.write("{}, {}\n".format(t[ii], s[ii]))
-        # if ii < len(Y):
-            # g.write("{}, {}\n".format(frq[ii], Y[ii]))
-            
 #the jank way: send all the arrays over serial
 input("Send a command over Serial when ready to receive data. ")
 send_data(t, "time")

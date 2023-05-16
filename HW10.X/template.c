@@ -12,7 +12,8 @@
 
 wsColor colormap_array[NUM_LEDS];
 wsColor colormap;
-float hue = 0;  
+float hue = 0;
+float hue_temp;
 
 
 int main(void) {
@@ -21,10 +22,13 @@ int main(void) {
     
   while (1) {
       
-      //generate array of all the same color
-      colormap = HSBtoRGB(hue, SAT, VALUE);
+      //generate array of different colors  
       for (uint8_t ii = 0; ii < NUM_LEDS; ii++) {
-          colormap_array[ii] = colormap;
+          hue_temp = hue + 20*ii;
+          if (hue_temp > 360){
+              hue_temp -= 360;
+          }
+          colormap_array[ii] = HSBtoRGB(hue_temp, SAT, VALUE);
       }
       
       //send the array of RGB colors along the data line

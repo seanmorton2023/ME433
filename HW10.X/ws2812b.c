@@ -19,7 +19,7 @@ void ws2812b_setup() {
 
     // initialize output pin as off - use B0
     DATA_PIN_TRISTATE = 0; //output
-    DATA_PIN_WRITE = 0; //on
+    DATA_PIN_WRITE = 0; //off
 }
 
 int process_color(volatile unsigned int* delay_times, uint8_t color_char, int nB) {
@@ -30,7 +30,7 @@ int process_color(volatile unsigned int* delay_times, uint8_t color_char, int nB
     uint8_t data_bit;
     for (int j = 7; j >= 0; j--) {
         /* identify the bit in c[].r, is it 1 */
-        data_bit = (color_char >> j) | 0x1;
+        data_bit = (color_char >> j) & 0x1;
         nB = append_to_delay_times(delay_times, data_bit, nB);
     }
     return nB;
@@ -83,11 +83,13 @@ void ws2812b_setColor(wsColor *c, int numLEDs) {
     for (i = 1; i < numBits; i++) {
         while (TMR2 < delay_times[i]) {
         }
-        LATBINV = 0b1000000; // invert B6
+        LATBINV = 0b1; // invert B6
     }
     DATA_PIN_WRITE = 0;
     TMR2 = 0;
     while(TMR2 < 2400){} // wait 50uS, reset condition
+    //while(TMR2 < 65500){} // wait longer
+
 }
 
 // adapted from https://forum.arduino.cc/index.php?topic=8498.0

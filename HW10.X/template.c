@@ -3,10 +3,10 @@
 
 #define NUM_LEDS 8 //for the stick of neopixels
 #define SAT 0.56 //near full-color but not quite
-#define VALUE 0.86 //midly bright
+#define VALUE 0.40 //mildly bright
 
 //for waiting between sends to the Neopixels
-#define FREQ_HZ 100
+#define FREQ_HZ 1000
 #define DELAY_MS (float)(1000 / FREQ_HZ)
 #define DELAY_CLOCK (uint32_t)(24000 * DELAY_MS)
 
@@ -31,13 +31,13 @@ int main(void) {
       ws2812b_setColor(colormap_array, NUM_LEDS);
       
       //increment the hue up to 360.0 to make the color change over time
-      hue += 1;
+      hue += 0.1;
       if (hue >= 360) {
           hue = 0;
       }
       
-      //delay by a reasonable amount of time
-      _CP0_SET_COUNT(0);
-      while (_CP0_GET_COUNT() < DELAY_CLOCK) {/*nothing*/}
+//      //delay by a reasonable amount of time
+//      _CP0_SET_COUNT(0);
+//      while (_CP0_GET_COUNT() < DELAY_CLOCK) {/*nothing*/}
    }
 }

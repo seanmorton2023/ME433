@@ -1,9 +1,6 @@
 # Your assignment: Make an array with 1024 elements. Into the array, sum 3 sine waves each with a different frequency. Take an FFT of the array and plot the output. Upload your code and a screenshot of the plot in a folder called HW11 in your repo.
 
 from ulab import numpy as np  # to get access to ulab numpy functions
-#import numpy as np
-
-import matplotlib.pyplot as plt
 
 def fft_data(t,s):
     '''Calculates and returns arrays of frequencies and their magnitudes
@@ -17,24 +14,12 @@ def fft_data(t,s):
     k = np.arange(n)
     T = n/Fs
     frq = k/T # two sides frequency range
-    frq = frq[range(int(n/2))] # one side frequency range
+    frq = frq[0:int(n/2)] # one side frequency range, modified for CircuitPython
     (re, im) = np.fft.fft(y) #different from how ndarrays work on regular python - in regular python it's one array w/ real + im components
     complex_abs = (re**2 + im**2)**0.5
     Y = complex_abs/n # fft computing and normalization
-    
-    Y = Y[range(int(n/2))]
-    return frq, abs(Y)
-    
-def plot_time_and_fft(t, s, frq, Y, axs, c):
-    '''Simply plots the time-domain and frequency-domain data for our signal on one plot
-    '''
-    (ax1, ax2) = axs
-    ax1.plot(t,s,c=c)
-    ax1.set_xlabel('Time')
-    ax1.set_ylabel('Amplitude')
-    ax2.loglog(frq,Y,c=c) # plotting the fft
-    ax2.set_xlabel('Freq (Hz)')
-    ax2.set_ylabel('|Y(freq)|')
+    Y = Y[0:int(n/2)] #modified for CircuitPython
+    return frq, Y
     
 def gen_data():
     #make an array with 1024 elements
@@ -49,27 +34,31 @@ def gen_data():
     #take the FFT of the output
     frq, Y = fft_data(t_arr, arr1)
     return t_arr, arr1, frq, Y
-
-def gen_fig(output_filepath):
-    '''Code repeated across the MAV and IIR functions; function added for ease of editing.
-
-    title: the title of the overall plot
-    output_filepath: where the figure gets saved
-    filter: the function applied to the signal to filter it
-    '''
-    t, s, frq, Y = gen_data()  
-    fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1) #figsize = (,) is another param
     
-    fig.suptitle("Signal and FFT - CircuitPython")
-    ax1.set_title("Signal")
-    ax2.set_title("FFT")
+def send_data(arr, name):
+    print(name + "_start")
+    for entry in arr:
+        print(entry)
+    print(name + "_end")
     
-    # #limit visible area of graph
-    # axs[0, 0].set_xlim([0.64, 1])
-    # axs[0, 2].set_xlim([3,10])
+#save data to CSV files and plot on local PC
+t, s, frq, Y = gen_data()
 
-    #export
-    plt.savefig(output_filepath)
+# with open('orig.csv', 'w') as f, open('fft.csv') as g:
 
-#plot the output
-gen_fig("fig_out.png")
+    # for ii in range(len(s)):
+        # f.write("{}, {}\n".format(t[ii], s[ii]))
+        # if ii < len(Y):
+            # g.write("{}, {}\n".format(frq[ii], Y[ii]))
+            
+#the jank way: send all the arrays over serial
+input("Send a command over Serial when ready to receive data. ")
+send_data(t, "time")
+send_data(s, "sig")
+send_data(frq, "frq")
+send_data(Y, "fft")
+
+
+    
+
+                

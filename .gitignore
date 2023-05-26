@@ -37,3 +37,4 @@
 *.zip
 HW9_DSP/.vs/VSWorkspaceState.json
 HW9_DSP/.vs/HW9_DSP/v16/.suo
+*.toml

@@ -39,7 +39,6 @@ unit = "F"
 #  font for HTML
 font_family = "monospace"
 
-old_time = time.monotonic()
 #  the HTML script
 #  setup as an f string
 #  this way, can insert string variables from code.py directly
@@ -79,20 +78,16 @@ def webpage():
     <h1>Control the LED on the Pico W with these buttons:</h1><br>
     <p><button class="button" name="LED" value="ON" type="submit">LED ON</button></a></p>
     <p><button class="button" name="LED" value="OFF" type="submit">LED OFF</button></a></p>
-    <p><button class="button" name="watch" value="TEST" type="submit">Stopwatch</button></p>
-
     </body>
     <script>
     // LED buttons handler
-    $(".button[name='LED']").click((el) => {{ $.post("/led", {{[el.target.name]: el.target.value}}) }});
+    $(".button").click((el) => {{ $.post("/led", {{[el.target.name]: el.target.value}}) }});
     // 1 sec temperature refresher
     setInterval(() => {{
         $.get("/temp", (data) => {{
             $("#temp").text(data);
         }});
     }}, 1000);
-    
-    $("button[name='watch']").click((el) => {{ $.post("/stopwatch", {{[el.target.name]: el.target.value}}) }})
     </script>
     </html>
     """
@@ -111,8 +106,8 @@ def base(request: Request):
 
 # change led state
 @server.route("/led", "POST")
-def led_bpress(request: Request):
-    print("led request")
+def buttonpress(request: Request):
+    print("button request")
     #  get query params (doesn't handle all cases, use with caution
     query = {x[0] : x[1] for x in [x.split("=") for x in request.body.decode("utf8").split("&")]}
     #  if the led on button was pressed
@@ -125,17 +120,6 @@ def led_bpress(request: Request):
 
         # response.send()
         
-    body=""
-    return Response(request, body=body, content_type="text/HTML")
-
-@server.route("/stopwatch", "POST")
-def stopwatch_bpress(request: Request):
-
-    global old_time
-    new_time = time.monotonic()
-    print(f"stopwatch: time elapsed (s) was {new_time - old_time}")
-    old_time = new_time
-
     body=""
     return Response(request, body=body, content_type="text/HTML")
 

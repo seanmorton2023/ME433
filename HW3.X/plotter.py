@@ -68,7 +68,7 @@ def serial_getter():
 if __name__ == '__main__':
 
     # hard coded serial port name, timeout after 2 minutes
-    ser = serial.Serial("COM6", 230400, timeout=120)
+    ser = serial.Serial("COM5", 230400, timeout=120)
 
     fig, ax = plt.subplots()
     plotter = Plotter(ax)

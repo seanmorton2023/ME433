@@ -1,9 +1,19 @@
 #include "pwm.h"
 
+char m[50];
+
 int freq_to_pr(int freq) {
     /*convert desired frequency of PWM signals for servo into 
      Period Register*/
-    return (int)((SYSCLK_FREQ / (PRESCALE_VAL * freq)) - 1);
+    int pr = (SYSCLK_FREQ / (PRESCALE_VAL * freq)) - 1;
+    
+    //error checking to ensure period doesn't exceed 2^16
+    if (pr > 65535) {
+        sprintf(m, "Invalid PR: %d\r\n", pr);
+        NU32DIP_WriteUART1(m);
+        while (1){}
+    }
+    return pr;
 }
 
 int duty_to_oc(float duty) {
@@ -13,8 +23,7 @@ int duty_to_oc(float duty) {
     if (duty < 0 || duty > 1){
         NU32DIP_WriteUART1("Invalid duty cycle\r\n");
     }
-
-    return (int) (duty * (PR_PROG + 1));
+    return (int)(duty * (PR_PROG + 1));
 }
 
 void timer_oc_setup() {

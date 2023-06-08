@@ -1,0 +1,59 @@
+
+//initializing SFRs for operation in ME333
+
+//Digital output for H-bridge control: D4
+TRISDbits.TRISD4 = 0;
+LATDbits.LATD4 = 0; //direction of motor 
+
+//Timer initialization (3 timers)
+
+T2CONbits.TCKPS = 0b001; //prescaler of 2, use PR = 2000
+T2CONbits.T32 = 0;
+PR2 = 2000;
+
+T3CONbits.TCKPS = 0b011; //prescaler of 8, use PR = 2000
+PR3 = 2000;
+
+T4CONbits.TCKPS = 0b100; //prescaler of 16, use PR = 25000
+T4CONbits.T32 = 0;
+PR4 = 25000;
+
+//OC PWM for H-bridge operation
+OC3CONbits.SIDL = 1;
+OC3CONbits.OCTSEL = 0; //timer2
+OC3CONbits.OCM = 0b110; //PWM mode; fault pin disabled
+OC3CONbits.OC32 = 0; //16 bit mode
+OC3R = 0; //initialize at 25% PR2 
+
+//Interrupt setup for ISRs on timers 3 and 4
+IPC3bits.T3IP = 5;
+IPC3bits.T3IS = 0;
+
+IPC4bits.T4IP = 4;
+IPC4bits.T4IS = 0;
+
+OC3CONbits.ON = 1;
+T2CONbits.ON = 1; //for 20KHz OC PWM
+T3CONbits.ON = 1; //for 5KHz current control ISR
+T4CONbits.ON = 1; //for 200Hz position control ISR
+
+
+IEC0bits.T3IE = 1;
+IEC0bits.T4IE = 1;
+
+
+//-----------------------------------------------------------//
+//setting PWM in ME333
+
+
+//If the operating mode is PWM, the duty cycle and direction bit are set according to 
+//the value ?100 to 100 specified by the user through the client
+
+//set magnitude and direction of PWM
+if (client_input < 0) {
+    LATDbits.LATD4 = 0;
+    OC3RS = (unsigned int) -client_input * PR2/100;			
+
+} else {
+    LATDbits.LATD4 = 1;
+    OC3RS = (unsigned int) client_input * PR2/100;		

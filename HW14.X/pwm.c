@@ -2,10 +2,10 @@
 
 char m[50];
 
-int freq_to_pr(int freq) {
+unsigned int freq_to_pr(int freq) {
     /*convert desired frequency of PWM signals for servo into 
      Period Register*/
-    int pr = (SYSCLK_FREQ / (PRESCALE_VAL * freq)) - 1;
+    unsigned int pr = (SYSCLK_FREQ / (PRESCALE_VAL * freq)) - 1;
     
     //error checking to ensure period doesn't exceed 2^16
     if (pr > 65535) {
@@ -16,14 +16,20 @@ int freq_to_pr(int freq) {
     return pr;
 }
 
-int duty_to_oc(float duty) {
+unsigned int duty_to_oc(float duty) {
     /*convert duty cycle (in %) to OCxRS */
-
+    unsigned int oc = (unsigned int)(duty * (PR_PROG + 1));
+    
     //enforce duty between 0 and 1
     if (duty < 0 || duty > 1){
-        NU32DIP_WriteUART1("Invalid duty cycle\r\n");
+        sprintf(m, "Invalid duty cycle: %f\r\n", duty);
+        NU32DIP_WriteUART1(m);
+    } else {
+        sprintf(m, "Duty cycle: %f OCxRS: %d\r\n", duty, oc);
+        NU32DIP_WriteUART1(m);
     }
-    return (int)(duty * (PR_PROG + 1));
+    return oc;
+    //note: doesn't make reference to PR2
 }
 
 void timer_oc_setup() {
@@ -36,6 +42,12 @@ void timer_oc_setup() {
     OC1R = duty_to_oc(0.25);        // this only happens once; once OC is turned on it's read only
     T2CONbits.ON = 1;               // turn on Timer2
     OC1CONbits.ON = 1;              // turn on OC1
+    
+    //set up reprogrammable IO for OC1CON
+    RPB7Rbits.RPB7R = 0b0101;
+    
+    sprintf(m, "Period register: %d\r\n", PR2);
+    NU32DIP_WriteUART1(m);
 }
 
 void update_duty(float duty) {

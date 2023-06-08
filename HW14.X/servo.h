@@ -17,7 +17,7 @@ extern "C" {
     
 //update rate for servo
 #define SERVO_CYCLE_FREQ_HZ 0.25
-#define SAMPLE_SIZE 2000 
+#define SAMPLE_SIZE 100 
 
 // the core timer ticks at half the SYSCLK, so 24000000 times per second
 // so each millisecond is 24000 ticks
@@ -25,8 +25,8 @@ extern "C" {
 #define DELAY_CLOCK_SERVO_UPDATE (uint32_t)(24000 * DELAY_MS_SERVO_UPDATE) //converted to clock cycles
 
 //min and max limits for servo's motion
-#define SERVO_ANG0_DUTY 0.01
-#define SERVO_ANG180_DUTY 0.05
+#define SERVO_ANG0_DUTY 0.02
+#define SERVO_ANG180_DUTY 0.10
 
 void gen_duty_array(float ang_init, float ang_final, float *array);
 float angle_to_duty(float angle);

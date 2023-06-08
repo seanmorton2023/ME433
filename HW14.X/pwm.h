@@ -37,8 +37,8 @@ extern "C" {
 
 #define PR_PROG freq_to_pr(PWM_FREQ)
 
-int freq_to_pr(int freq);
-int duty_to_oc(float duty);
+unsigned int freq_to_pr(int freq);
+unsigned int duty_to_oc(float duty);
 void timer_oc_setup(void);
 void update_duty(float duty);    
     

@@ -20,31 +20,12 @@ int main(void) {
       
       for (int jj = 0; jj < SAMPLE_SIZE; ++jj) {
         _CP0_SET_COUNT(0);    
-      
-        NU32DIP_WriteUART1("Top of the loop\r\n");
-        
-        //change OC1RS to a new duty cycle (new angle of servo)
-        //update_duty(duty_array[jj]);
-        
-//        //enforce good timing
-//        while (_CP0_GET_COUNT() < DELAY_CLOCK_SERVO_UPDATE) {/*nothing*/} 
-//      }
               
-        //OC1RS = 600;
-        OC1RS = 1200;
-        sprintf(buff, "Sending 1200\r\n");
-        NU32DIP_WriteUART1(buff);
-        while (_CP0_GET_COUNT() < 24000 * 1000) {/*nothing; 1000ms delay*/}
-        
-        OC1RS = 6200;        
-        sprintf(buff, "Sending 6200\r\n");
-        NU32DIP_WriteUART1(buff);
-        while (_CP0_GET_COUNT() < 24000 * 4000) {/*nothing; 1000ms delay*/}
-
-        
-      }
-
-      //optional: extra delays, or something else happens after every cycle
+        //change OC1RS to a new duty cycle (new angle of servo)
+        update_duty(duty_array[jj]);
       
+        //enforce good timing
+        while (_CP0_GET_COUNT() < DELAY_CLOCK_SERVO_UPDATE) {/*nothing*/} 
+     }
    }
 }
